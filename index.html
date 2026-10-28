@@ -109,7 +109,7 @@ footer{padding:50px 6vw;text-align:center;color:var(--mut)}
 <div class="card b"><h3 style="font-size:28px">2. Pague e agende</h3>
 <label>Data da entrega</label><input type="date" id="dt">
 <label>Pagamento</label><div class="seg" id="pay"><button aria-pressed="true" data-v="Pix">Pix</button><button aria-pressed="false" data-v="Cartão">Cartão</button></div>
-<label>Seu nome</label><input id="nm" placeholder="Ex.: Ana" autocomplete="name"><label>WhatsApp (para avisos da entrega)</label><input id="ph" inputmode="tel" placeholder="(84) 9 0000-0000" autocomplete="tel">
+<label>Seu nome</label><input id="nm" placeholder="Ex.: Ana">
 <div class="tot"><span id="cnt">0 docinhos</span><b id="tot">R$ 0</b></div>
 <button class="btn" id="go" style="width:100%">Pagar e agendar</button>
 <p id="err" style="color:var(--pink);font-weight:600;margin-top:10px"></p></div>
@@ -118,9 +118,11 @@ footer{padding:50px 6vw;text-align:center;color:var(--mut)}
 <section id="cardapio" style="background:var(--bg2)"><div class="wrap">
 <div class="tag">Cardápio sempre atualizado</div>
 <h2>Mudou o preço? Em segundos.</h2>
-<p class="lead">Chega de PDF pesado reenviado toda semana. Preços e sabores mudam aqui assim que a doceria atualiza o painel, sem ninguém reenviar nada.</p>
-<div class="card" style="max-width:640px"><div id="menu" aria-live="polite"></div></div>
-</div></section>
+<p class="lead">Chega de PDF pesado reenviado toda semana. Mude o preço ou esgote um sabor no painel da doceria e veja o cardápio do cliente reagir ao lado.</p>
+<div class="grid">
+<div class="card"><h3 style="font-size:28px;margin-bottom:8px">O que o cliente vê</h3><div id="menu"></div></div>
+<div class="card b"><h3 style="font-size:28px;margin-bottom:8px">Painel da doceria</h3><div id="adm"></div></div>
+</div></div></section>
 
 <section id="eventos"><div class="wrap">
 <div class="tag">Encomendas de eventos</div>
@@ -131,12 +133,12 @@ footer{padding:50px 6vw;text-align:center;color:var(--mut)}
 <label>Convidados: <b id="gv">80</b></label><input type="range" id="gu" min="10" max="400" step="10" value="80">
 <label>Data do evento</label><input type="date" id="ed">
 <label>Investimento previsto</label><select id="bd"><option value="0">Ainda não sei</option><option value="500">até R$ 500</option><option value="1500">R$ 500 a 1.500</option><option value="3000">R$ 1.500 a 3.000</option><option value="6000">acima de R$ 3.000</option></select>
-<label>Seu nome</label><input id="en" autocomplete="name"><label>WhatsApp</label><input id="wa" inputmode="tel" placeholder="(84) 9 0000-0000"></div>
+<label>WhatsApp</label><input id="wa" inputmode="tel" placeholder="(84) 9 0000-0000"></div>
 <div class="card b"><h3 style="font-size:28px">Triagem automática</h3>
 <div class="meter"><i id="mt"></i></div>
 <p id="sc" style="margin:12px 0"></p><span class="badge cold" id="bg">Preencha para avaliar</span>
 <p id="sg2" style="margin:16px 0;color:var(--mut)"></p>
-<button class="btn" id="sendq" style="width:100%">Enviar pedido de orçamento</button><p id="qerr" style="color:var(--pink);font-weight:600;margin-top:10px"></p></div>
+<button class="btn" id="sendq" style="width:100%">Enviar pedido de orçamento</button></div>
 </div></div></section>
 
 <section id="conf" style="background:var(--ink);color:var(--bg)"><div class="wrap">
@@ -148,50 +150,40 @@ footer{padding:50px 6vw;text-align:center;color:var(--mut)}
 <div class="stats"><div><b data-n="20">0</b>minutos economizados por pedido</div><div><b data-n="24">0</b>horas de cardápio aberto por dia</div><div><b data-n="3">0</b>vezes mais confiança em orçamentos altos*</div></div>
 <p style="opacity:.6;font-size:13px;margin-top:18px">*Valor ilustrativo desta demonstração.</p>
 </div></section>
-<footer>Brigadá • feito com carinho • <a href="/admin" style="color:inherit">Área da confeiteira</a></footer>
+<footer>Brigadá • demonstração de site e sistema para docerias</footer>
 
-<div id="ok" role="dialog" aria-live="polite"><div class="box"><div class="fat" id="okh" style="font-size:44px;color:var(--pink)">Pedido confirmado!</div><p id="okt" style="margin:14px 0 22px"></p><div id="pixb" style="display:none;margin-bottom:18px"><small style="display:block;margin-bottom:6px">Código Pix (copia e cola)</small><code id="pixc" style="display:block;word-break:break-all;background:var(--bg2);padding:10px;border-radius:12px;margin-bottom:8px"></code><button class="btn alt" id="pixcp" style="padding:8px 16px;font-size:14px">Copiar código</button></div><button class="btn" id="cl">Fechar</button></div></div>
+<div id="ok" role="dialog" aria-live="polite"><div class="box"><div class="fat" style="font-size:44px;color:var(--pink)">Pedido confirmado!</div><p id="okt" style="margin:14px 0 22px"></p><button class="btn" id="cl">Fechar</button></div></div>
 
 <script>
 const $=s=>document.querySelector(s),COL=['#FF4F83','#F2A93B','#2fbf71','#6aa8ff','#fff'];
-let M=[];
+const M=[{id:1,n:'Brigadeiro tradicional',d:'Chocolate 50%, granulado belga',p:3.5,c:'#4A1F14',on:1,q:0},{id:2,n:'Beijinho de coco',d:'Coco fresco e cravo',p:3.5,c:'#f6efe0',on:1,q:0},{id:3,n:'Ninho com Nutella',d:'Leite ninho, creme de avelã',p:5,c:'#e9c98c',on:1,q:0},{id:4,n:'Pistache da casa',d:'Pasta pura, sem corante',p:7,c:'#9cc46b',on:1,q:0},{id:5,n:'Morango do amor',d:'Brigadeiro de morango real',p:5.5,c:'#ff6b8e',on:1,q:0}];
 const R=n=>'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
 // hero
 const h=$('#h');let i=0;[['Doce','l1'],['sem','l1'],['fila.','l2']].forEach(([w,c],k)=>{if(k)h.append(document.createElement('br'));[...w].forEach(ch=>{const s=document.createElement('span');s.textContent=ch;s.className=c;s.style.setProperty('--i',i++);h.append(s)})});
 const sg=$('#sg');for(let k=0;k<26;k++){const a=Math.random()*6.28,r=Math.random()*58,e=document.createElementNS('http://www.w3.org/2000/svg','rect');e.setAttribute('x',100+Math.cos(a)*r);e.setAttribute('y',95+Math.sin(a)*r);e.setAttribute('width',3);e.setAttribute('height',11);e.setAttribute('rx',1.5);e.setAttribute('fill',COL[k%4]);e.setAttribute('transform',`rotate(${Math.random()*180} ${100+Math.cos(a)*r} ${95+Math.sin(a)*r})`);sg.append(e)}
 for(let k=0;k<34;k++){const s=document.createElement('i');s.className='sp';s.style.cssText=`left:${Math.random()*100}%;background:${COL[k%4]};animation-duration:${5+Math.random()*7}s;animation-delay:-${Math.random()*10}s;opacity:.7`;$('#hero').append(s)}
 $('#mq').innerHTML=('Brigadeiro • Beijinho • Casadinho • Bolo no pote • Cento de doces • '.repeat(4));
-// cardápio e montagem da caixa (dados vêm do servidor)
+// menu + builder + admin
 let pay='Pix',flash=0;
 function render(){
- $('#menu').innerHTML=M.length?M.map(m=>`<div class="item ${m.on?'':'off'}"><span class="dot" style="background:${m.c}"></span><span class="n">${esc(m.n)}<small>${m.on?esc(m.d):'Esgotado hoje'}</small></span><span class="pr ${flash==m.id?'flash':''}">${R(m.p)}</span></div>`).join(''):'<p>Carregando o cardápio…</p>';
- $('#pick').innerHTML=M.filter(m=>m.on).map(m=>`<div class="item"><span class="dot" style="background:${m.c}"></span><span class="n">${esc(m.n)}<small>${R(m.p)} cada</small></span><span class="step"><button data-m="${m.id}" aria-label="menos">−</button><output>${m.q}</output><button data-a="${m.id}" aria-label="mais">+</button></span></div>`).join('');
+ $('#menu').innerHTML=M.map(m=>`<div class="item ${m.on?'':'off'}"><span class="dot" style="background:${m.c}"></span><span class="n">${m.n}<small>${m.on?m.d:'Esgotado hoje'}</small></span><span class="pr ${flash==m.id?'flash':''}">${R(m.p)}</span></div>`).join('');
+ $('#adm').innerHTML=M.map(m=>`<div class="item"><span class="n">${m.n}</span><input type="number" step="0.5" min="0" value="${m.p}" data-p="${m.id}" style="width:84px;padding:8px" aria-label="Preço ${m.n}"><button class="btn alt" data-t="${m.id}" style="padding:8px 14px;font-size:13px">${m.on?'Esgotar':'Liberar'}</button></div>`).join('');
+ $('#pick').innerHTML=M.filter(m=>m.on).map(m=>`<div class="item"><span class="dot" style="background:${m.c}"></span><span class="n">${m.n}<small>${R(m.p)} cada</small></span><span class="step"><button data-m="${m.id}" aria-label="menos">−</button><output>${m.q}</output><button data-a="${m.id}" aria-label="mais">+</button></span></div>`).join('');
  const L=M.filter(m=>m.on),c=L.reduce((s,m)=>s+m.q,0),t=L.reduce((s,m)=>s+m.q*m.p,0);
  $('#cnt').textContent=c+' docinhos';$('#tot').textContent=R(t);flash=0}
-const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-async function loadMenu(first){
- try{const j=await (await fetch('/api/menu')).json();
-  const q=Object.fromEntries(M.map(m=>[m.id,m.q])),old=Object.fromEntries(M.map(m=>[m.id,m.p]));
-  M=j.items.map(i=>({id:i.id,n:i.name,d:i.description||'',p:i.price_cents/100,c:i.color||'#4A1F14',on:i.active?1:0,q:i.active?(q[i.id]||0):0}));
-  const ch=M.find(m=>old[m.id]!==undefined&&old[m.id]!==m.p);flash=ch?ch.id:0;render()}
- catch(e){if(first)$('#menu').innerHTML='<p>Não foi possível carregar o cardápio agora. Tente recarregar a página.</p>'}}
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const f=id=>M.find(m=>m.id==id);
- if(b.dataset.a){f(b.dataset.a).q++;render()}if(b.dataset.m){const m=f(b.dataset.m);m.q=Math.max(0,m.q-1);render()}});
+ if(b.dataset.a){f(b.dataset.a).q++;render()}if(b.dataset.m){const m=f(b.dataset.m);m.q=Math.max(0,m.q-1);render()}
+ if(b.dataset.t){const m=f(b.dataset.t);m.on=!m.on;if(!m.on)m.q=0;flash=m.id;render()}});
+document.addEventListener('change',e=>{if(e.target.dataset.p){const m=M.find(x=>x.id==e.target.dataset.p);m.p=Math.max(0,+e.target.value||0);flash=m.id;render()}});
 document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x==b));if(g.id=='pay')pay=b.dataset.v;eva()}));
 const tm=new Date(Date.now()+864e5).toISOString().slice(0,10);$('#dt').min=tm;$('#dt').value=tm;
 function confetti(){for(let k=0;k<70;k++){const d=document.createElement('i');d.className='cf';d.style.cssText=`left:${Math.random()*100}%;background:${COL[k%5]};animation-duration:${1.6+Math.random()*1.6}s;animation-delay:${Math.random()*.4}s;border-radius:${k%2?'50%':'2px'}`;document.body.append(d);setTimeout(()=>d.remove(),3800)}}
-function done(title,msg,pix){$('#okh').textContent=title;$('#okt').textContent=msg;$('#pixb').style.display=pix?'block':'none';$('#pixc').textContent=pix||'';$('#ok').classList.add('on');confetti();$('#cl').focus()}
-$('#pixcp').onclick=async()=>{try{await navigator.clipboard.writeText($('#pixc').textContent);$('#pixcp').textContent='Copiado!'}catch(e){$('#pixcp').textContent='Selecione e copie o código'}};
+function done(msg){$('#okt').textContent=msg;$('#ok').classList.add('on');confetti();$('#cl').focus()}
 $('#cl').onclick=()=>$('#ok').classList.remove('on');
-$('#go').onclick=async()=>{const c=M.reduce((s,m)=>s+m.q,0),n=$('#nm').value.trim(),err=$('#err');err.textContent='';
- if(c<4)return err.textContent='O pedido mínimo é de 4 docinhos.';if(!n)return err.textContent='Informe seu nome.';
- const b=$('#go');b.disabled=true;b.textContent='Enviando…';
- try{const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customer:n,phone:$('#ph').value,delivery_date:$('#dt').value,payment_method:pay,items:M.filter(m=>m.q).map(m=>({menu_id:m.id,qty:m.q}))})});
-  const j=await r.json();if(!r.ok){if(r.status==409)loadMenu();throw new Error(j.error||'Erro ao enviar o pedido.')}
-  const d=new Date(j.delivery_date+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
-  done('Pedido recebido!',`Obrigada, ${n}! Pedido #${j.code} de ${R(j.total_cents/100)}. Entrega agendada para ${d}.`+(pay=='Cartão'?' Enviaremos o link de pagamento pelo WhatsApp.':' Pague com o Pix abaixo para confirmar.'),j.pix_code);
-  M.forEach(m=>m.q=0);render()}
- catch(e){err.textContent=e.message}finally{b.disabled=false;b.textContent='Pagar e agendar'}};
+$('#go').onclick=()=>{const c=M.reduce((s,m)=>s+m.q,0);const n=$('#nm').value.trim();
+ if(!c)return $('#err').textContent='Escolha ao menos um docinho.';if(!n)return $('#err').textContent='Informe seu nome.';$('#err').textContent='';
+ const d=new Date($('#dt').value+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+ done(`Obrigada, ${n}! ${c} docinhos, ${$('#tot').textContent} via ${pay}. Entrega agendada para ${d}.`);M.forEach(m=>m.q=0);render()};
 // eventos
 const ed=$('#ed');const e0=new Date(Date.now()+30*864e5).toISOString().slice(0,10);ed.min=tm;ed.value=e0;
 function eva(){const g=+$('#gu').value,b=+$('#bd').value,days=(new Date(ed.value)-Date.now())/864e5,ph=$('#wa').value.replace(/\D/g,'').length>=10;
@@ -200,11 +192,8 @@ function eva(){const g=+$('#gu').value,b=+$('#bd').value,days=(new Date(ed.value
  const bg=$('#bg');bg.className='badge '+(hot?'hot':'cold');bg.textContent=hot?'Cliente qualificado':'Ainda em dúvida';
  $('#sg2').textContent=hot?'Vai direto para a sua fila com prioridade e já com data, convidados e verba.':!b?'Informe uma faixa de investimento para receber o orçamento.':!ph?'Falta o WhatsApp para contato.':days<14?'Pouco prazo: avisamos sobre a agenda antes do orçamento.':'Verba abaixo do usual para este número de convidados. Enviamos opções do cardápio padrão.'}
 ['gu','ed','bd','wa'].forEach(id=>$('#'+id).addEventListener('input',eva));eva();
-$('#sendq').onclick=async()=>{eva();const b=$('#sendq'),err=$('#qerr');err.textContent='';b.disabled=true;
- try{const r=await fetch('/api/quotes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:document.querySelector('#ev [aria-pressed=true]').dataset.v,guests:+$('#gu').value,event_date:ed.value,budget_cents:+$('#bd').value*100,phone:$('#wa').value,name:$('#en').value})});
-  const j=await r.json();if(!r.ok)throw new Error(j.error||'Erro ao enviar.');done('Recebido!',j.message)}
- catch(e){err.textContent=e.message}finally{b.disabled=false}};
-loadMenu(1);setInterval(()=>{if(!document.hidden)loadMenu()},20000);
+$('#sendq').onclick=()=>{eva();done($('#bg').textContent=='Cliente qualificado'?'Pedido de orçamento enviado com prioridade. Respondemos em até 2 horas.':'Recebemos! Enviamos o cardápio de eventos e as opções que cabem na sua verba.')};
+render();
 // reveal + counters
 const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);if(x.target.dataset.n){const t=+x.target.dataset.n,e=x.target;let v=0;const iv=setInterval(()=>{v++;e.textContent=v+(t==3?'x':'');if(v>=t)clearInterval(iv)},1100/t)}}}),{threshold:.25});
 document.querySelectorAll('.card,.browser,[data-n]').forEach(e=>{if(!e.dataset.n)e.classList.add('rv');io.observe(e)});
