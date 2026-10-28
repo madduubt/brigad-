@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brigadá • Painel da confeiteira</title>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E4F0CF;--bg2:#FFF1F4;--ink:#2B0A22;--pink:#FF4F83;--cara:#F2A93B;--ok:#2fbf71;--card:#fff;--mut:#6b4a5f}
+@media(prefers-color-scheme:dark){:root{--bg:#2B0A22;--bg2:#3a1230;--ink:#FFF1F4;--card:#44193a;--mut:#d9b5c9}}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 Figtree,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.fat{font-family:'Bagel Fat One','Arial Black',sans-serif;font-weight:400;line-height:1}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:18px 5vw}
+header b{font-size:30px;color:var(--pink)}
+main{max-width:1100px;margin:auto;padding:0 5vw 60px}
+button,input,select{font:inherit;color:var(--ink)}
+.btn{background:var(--pink);color:#fff;border:0;border-radius:99px;padding:10px 18px;font-weight:800;cursor:pointer;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.btn:hover{transform:scale(1.06)}.btn.alt{background:var(--ink);color:var(--bg)}.btn.sm{padding:7px 13px;font-size:14px}.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+:focus-visible{outline:3px solid var(--cara);outline-offset:2px}
+input,select{padding:10px 12px;border:2px solid var(--ink);border-radius:12px;background:var(--bg2)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 22px}
+.tabs button{border:2px solid var(--ink);background:transparent;border-radius:99px;padding:9px 18px;font-weight:800;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.tabs i{font-style:normal;background:var(--pink);color:#fff;border-radius:99px;padding:1px 8px;margin-left:6px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:24px}
+.stat{background:var(--card);border-radius:26px 26px 26px 8px;padding:18px 20px;box-shadow:0 7px 0 var(--ink)}
+.stat b{display:block;font:400 38px 'Bagel Fat One',sans-serif;color:var(--pink)}
+.stat span{color:var(--mut);font-size:14px}
+.card{background:var(--card);border-radius:8px 26px 26px 26px;padding:20px;box-shadow:0 7px 0 var(--pink);margin-bottom:22px}
+.card h3{font:400 24px 'Bagel Fat One',sans-serif;margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:2px dashed color-mix(in srgb,var(--ink) 20%,transparent)}
+.row:last-child{border:0}.row small{color:var(--mut);display:block}
+.pill{display:inline-block;padding:3px 12px;border-radius:99px;font-size:13px;font-weight:800;background:var(--cara);color:#4A1F14}
+.pill.pago,.pill.hot,.pill.entregue,.pill.fechado{background:var(--ok);color:#fff}.pill.cancelado,.pill.perdido{background:#999;color:#fff}.pill.em_producao{background:var(--pink);color:#fff}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.prod{display:flex;flex-wrap:wrap;gap:10px}
+.prod div{background:var(--bg2);border-radius:18px;padding:10px 16px;font-weight:600}.prod b{font:400 28px 'Bagel Fat One',sans-serif;color:var(--pink);margin-right:6px}
+.empty{color:var(--mut);padding:14px 0}
+#login{max-width:420px;margin:12vh auto;padding:0 5vw;text-align:center}
+#login h1{font-size:52px;color:var(--pink);margin-bottom:10px}
+#login input{width:100%;margin:16px 0 12px;text-align:center}
+.new{animation:nw 1.6s}@keyframes nw{0%{background:var(--cara);transform:scale(1.03)}100%{background:transparent}}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));translate:-50% 0;background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:99px;font-weight:800;opacity:0;transform:translateY(30px);transition:.4s cubic-bezier(.3,1.6,.5,1);pointer-events:none}
+#toast.on{opacity:1;transform:none}
+.hide{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="login">
+<h1 class="fat">Brigadá</h1><p>Painel da confeiteira</p>
+<input id="tk" type="password" placeholder="Senha do painel" aria-label="Senha do painel" autocomplete="current-password">
+<button class="btn" id="enter" style="width:100%">Entrar</button>
+<p id="lerr" style="color:var(--pink);font-weight:600;margin-top:12px"></p>
+<p style="margin-top:22px"><button class="btn ghost sm" id="demo">Ver com dados de exemplo</button></p>
+</div>
+
+<div id="app" class="hide">
+<header><b class="fat">Brigadá</b><div><span id="mode" class="pill hide">Modo exemplo</span> <button class="btn alt sm" id="out">Sair</button></div></header>
+<main>
+<div class="stats" id="stats"></div>
+<div class="tabs" role="tablist" id="tabs">
+<button role="tab" data-t="ped" aria-selected="true">Pedidos<i id="c1">0</i></button>
+<button role="tab" data-t="cardapio" aria-selected="false">Cardápio</button>
+<button role="tab" data-t="ev" aria-selected="false">Eventos<i id="c2">0</i></button></div>
+
+<section id="ped">
+<div class="card"><h3>Lista de produção</h3>
+<label>Dia da entrega <input type="date" id="pd"></label>
+<div class="prod" id="prod" style="margin-top:14px"></div></div>
+<div class="card"><h3>Pedidos</h3>
+<div class="tabs" id="flt" style="margin:0 0 8px"></div><div id="orders"></div></div>
+</section>
+
+<section id="cardapio" class="hide">
+<div class="card"><h3>Preços e disponibilidade</h3><div id="menu"></div></div>
+<div class="card"><h3>Novo doce</h3><div style="display:flex;gap:10px;flex-wrap:wrap">
+<input id="nn" placeholder="Nome" style="flex:2;min-width:160px"><input id="nd" placeholder="Descrição" style="flex:3;min-width:180px"><input id="np" type="number" step="0.5" min="0" placeholder="Preço R$" style="width:110px"><button class="btn" id="add">Adicionar</button></div></div>
+</section>
+
+<section id="ev" class="hide"><div class="card"><h3>Orçamentos de eventos</h3><p class="empty" style="padding-top:0">Quem tem mais chance de fechar aparece primeiro.</p><div id="quotes"></div></div></section>
+</main></div>
+<div id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const R=c=>'R$ '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2});
+const D=s=>new Date(s+'T12:00').toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'});
+const E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LBL={aguardando_pagamento:'Aguardando pagamento',pago:'Pago',em_producao:'Em produção',entregue:'Entregue',cancelado:'Cancelado',novo:'Novo',contatado:'Contatado',fechado:'Fechado',perdido:'Perdido'};
+const NEXT={aguardando_pagamento:['pago','Marcar pago'],pago:['em_producao','Iniciar produção'],em_producao:['entregue','Entregue']};
+let token='',demo=false,S={orders:[],quotes:[],menu:[]},filter='ativos',seen=null,timer;
+const today=()=>new Date().toISOString().slice(0,10);
+const iso=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
+
+// ---- modo exemplo (sem servidor) ----
+const DEMO={menu:[{id:1,name:'Brigadeiro tradicional',description:'Chocolate 50%',price_cents:350,active:1},{id:2,name:'Beijinho de coco',description:'Coco fresco',price_cents:350,active:1},{id:3,name:'Ninho com Nutella',description:'',price_cents:500,active:1}],
+orders:[{id:1,code:'A1B2C3',customer:'Ana',phone:'84999990000',delivery_date:iso(1),payment_method:'Pix',total_cents:3100,status:'pago',items:[{name:'Brigadeiro tradicional',qty:6},{name:'Ninho com Nutella',qty:2}]},
+{id:2,code:'D4E5F6',customer:'Marcos',phone:'84988887777',delivery_date:iso(1),payment_method:'Cartão',total_cents:8400,status:'aguardando_pagamento',items:[{name:'Beijinho de coco',qty:24}]},
+{id:3,code:'0F9E8D',customer:'Luiza',phone:'',delivery_date:iso(3),payment_method:'Pix',total_cents:5000,status:'em_producao',items:[{name:'Ninho com Nutella',qty:10}]}],
+quotes:[{id:1,name:'Carla',event_type:'Casamento',guests:120,event_date:iso(60),budget_cents:600000,phone:'84977776666',score:100,qualified:1,reason:'Data, verba e contato completos.',status:'novo'},
+{id:2,name:'',event_type:'Aniversário',guests:25,event_date:iso(4),budget_cents:0,phone:'',score:14,qualified:0,reason:'Sem faixa de investimento informada.',status:'novo'}]};
+async function api(method,path,body){
+ if(demo){await new Promise(r=>setTimeout(r,120));let m;
+  if(path=='/api/admin/orders')return{orders:DEMO.orders};if(path=='/api/admin/quotes')return{quotes:DEMO.quotes};if(path=='/api/menu')return{items:DEMO.menu};
+  if(m=path.match(/menu\/(\d+)/)){Object.assign(DEMO.menu.find(x=>x.id==m[1]),body);return{ok:1}}
+  if(path=='/api/admin/menu'){DEMO.menu.push({id:Date.now(),name:body.name,description:body.description,price_cents:body.price_cents,active:1});return{ok:1}}
+  if(m=path.match(/(orders|quotes)\/(\d+)/)){DEMO[m[1]].find(x=>x.id==m[2]).status=body.status;return{ok:1}}return{}}
+ const base=new URLSearchParams(location.search).get('api')||'';
+ const r=await fetch(base+path,{method,headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:body?JSON.stringify(body):undefined});
+ const j=await r.json().catch(()=>({}));if(!r.ok){const e=new Error(j.error||'Erro');e.status=r.status;throw e}return j}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
+
+// ---- carregar e desenhar ----
+async function load(first){
+ const [o,q,m]=await Promise.all([api('GET','/api/admin/orders'),api('GET','/api/admin/quotes'),api('GET','/api/menu')]);
+ const fresh=new Set(S.orders.map(x=>x.code));
+ S={orders:o.orders,quotes:q.quotes,menu:m.items};
+ if(seen!==null){const n=S.orders.filter(x=>!seen.has(x.code));if(n.length){toast(`Novo pedido de ${n[0].customer}!`);n.forEach(x=>x._new=1)}}
+ seen=new Set(S.orders.map(x=>x.code));draw()}
+function draw(){
+ const paid=S.orders.filter(o=>['pago','em_producao','entregue'].includes(o.status)),td=S.orders.filter(o=>o.delivery_date==today()&&o.status!='cancelado'),hot=S.quotes.filter(q=>q.qualified&&q.status=='novo');
+ const open=S.orders.filter(o=>!['entregue','cancelado'].includes(o.status));
+ $('#stats').innerHTML=[[td.length,'entregas hoje'],[open.filter(o=>o.status=='aguardando_pagamento').length,'aguardando pagamento'],[R(paid.reduce((s,o)=>s+o.total_cents,0)),'já pago'],[hot.length,'orçamentos quentes']].map(([b,s])=>`<div class="stat"><b>${b}</b><span>${s}</span></div>`).join('');
+ $('#c1').textContent=open.length;$('#c2').textContent=hot.length;
+ // produção
+ const day=$('#pd').value,agg={};S.orders.filter(o=>o.delivery_date==day&&['pago','em_producao'].includes(o.status)).forEach(o=>o.items.forEach(i=>agg[i.name]=(agg[i.name]||0)+i.qty));
+ $('#prod').innerHTML=Object.keys(agg).length?Object.entries(agg).map(([n,q])=>`<div><b>${q}</b>${E(n)}</div>`).join(''):'<p class="empty">Nada pago para produzir neste dia.</p>';
+ // pedidos
+ const F=[['ativos','Ativos'],['aguardando_pagamento','Aguardando pagamento'],['entregue','Entregues'],['cancelado','Cancelados']];
+ $('#flt').innerHTML=F.map(([k,l])=>`<button data-f="${k}" aria-selected="${filter==k}">${l}</button>`).join('');
+ const list=S.orders.filter(o=>filter=='ativos'?!['entregue','cancelado'].includes(o.status):o.status==filter);
+ $('#orders').innerHTML=list.length?list.map(o=>`<div class="row ${o._new?'new':''}"><div><b>${E(o.customer)}</b> <span class="pill ${o.status}">${LBL[o.status]}</span>
+ <small>${D(o.delivery_date)} • ${o.payment_method} • ${R(o.total_cents)} • #${o.code}</small><small>${o.items.map(i=>i.qty+'× '+E(i.name)).join(', ')}</small></div>
+ <div class="acts">${o.phone?`<a class="btn ghost sm" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/55${E(o.phone)}">WhatsApp</a>`:''}
+ ${NEXT[o.status]?`<button class="btn sm" data-o="${o.id}" data-s="${NEXT[o.status][0]}">${NEXT[o.status][1]}</button>`:''}
+ ${!['entregue','cancelado'].includes(o.status)?`<button class="btn ghost sm" data-o="${o.id}" data-s="cancelado">Cancelar</button>`:''}</div></div>`).join(''):'<p class="empty">Nenhum pedido aqui.</p>';
+ S.orders.forEach(o=>delete o._new);
+ // cardápio
+ $('#menu').innerHTML=S.menu.map(m=>`<div class="row"><div><b>${E(m.name)}</b><small>${E(m.description)}</small></div><div class="acts"><input type="number" step="0.5" min="0" value="${(m.price_cents/100).toFixed(2)}" data-p="${m.id}" style="width:100px" aria-label="Preço de ${E(m.name)}"><button class="btn sm ${m.active?'alt':''}" data-t="${m.id}">${m.active?'Esgotar':'Liberar'}</button></div></div>`).join('');
+ // eventos
+ $('#quotes').innerHTML=S.quotes.length?S.quotes.map(q=>`<div class="row"><div><b>${E(q.event_type)}</b> • ${q.guests} convidados <span class="pill ${q.qualified?'hot':''}">${q.qualified?'Qualificado':'Em dúvida'} ${q.score}</span> <span class="pill ${q.status}">${LBL[q.status]}</span>
+ <small>${D(q.event_date)} • verba ${q.budget_cents?R(q.budget_cents):'não informada'}${q.name?' • '+E(q.name):''}</small><small>${E(q.reason)}</small></div>
+ <div class="acts">${q.phone?`<a class="btn ghost sm" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/55${E(q.phone)}">WhatsApp</a>`:''}
+ <select data-q="${q.id}" aria-label="Status do orçamento">${['novo','contatado','fechado','perdido'].map(s=>`<option value="${s}" ${q.status==s?'selected':''}>${LBL[s]}</option>`).join('')}</select></div></div>`).join(''):'<p class="empty">Nenhum orçamento ainda.</p>'}
+
+// ---- ações ----
+const act=async(fn,ok)=>{try{await fn();await load();ok&&toast(ok)}catch(e){toast(e.message)}};
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.t&&b.closest('#tabs'))return tab(d.t);
+ if(d.f){filter=d.f;draw()}
+ if(d.o)act(()=>api('PATCH','/api/admin/orders/'+d.o,{status:d.s}),'Pedido atualizado');
+ if(d.t&&b.closest('#menu')){const m=S.menu.find(x=>x.id==d.t);act(()=>api('PATCH','/api/admin/menu/'+d.t,{active:!m.active}),m.active?'Marcado como esgotado':'Liberado no cardápio')}});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.dataset.p)act(()=>api('PATCH','/api/admin/menu/'+t.dataset.p,{price_cents:Math.round(parseFloat(t.value||0)*100)}),'Preço atualizado no site');
+ if(t.dataset.q)act(()=>api('PATCH','/api/admin/quotes/'+t.dataset.q,{status:t.value}),'Orçamento atualizado');
+ if(t.id=='pd')draw()});
+$('#add').onclick=()=>{const n=$('#nn').value.trim(),p=parseFloat($('#np').value);if(!n||isNaN(p))return toast('Preencha nome e preço.');
+ act(()=>api('POST','/api/admin/menu',{name:n,description:$('#nd').value,price_cents:Math.round(p*100)}),'Doce adicionado').then(()=>{$('#nn').value=$('#nd').value=$('#np').value=''})};
+function tab(t){document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.t==t));['ped','cardapio','ev'].forEach(i=>$('#'+i).classList.toggle('hide',i!=t))}
+$('#pd').value=iso(1);
+
+// ---- entrar / sair ----
+async function start(){$('#login').classList.add('hide');$('#app').classList.remove('hide');$('#mode').classList.toggle('hide',!demo);seen=null;await load();clearInterval(timer);if(!demo)timer=setInterval(()=>load().catch(()=>{}),20000)}
+$('#enter').onclick=async()=>{token=$('#tk').value.trim();if(!token)return;$('#lerr').textContent='';
+ try{await api('GET','/api/admin/orders');sessionStorage.setItem('tk',token);start()}
+ catch(e){$('#lerr').textContent=e.status==401?'Senha incorreta.':'Não consegui falar com o servidor.'}};
+$('#tk').addEventListener('keydown',e=>e.key=='Enter'&&$('#enter').click());
+$('#demo').onclick=()=>{demo=true;start()};
+$('#out').onclick=()=>{try{sessionStorage.removeItem('tk')}catch(e){}location.reload()};
+try{const t=sessionStorage.getItem('tk');if(t){token=t;api('GET','/api/admin/orders').then(start).catch(()=>{})}}catch(e){}
+</script>
+</body>
+</html>

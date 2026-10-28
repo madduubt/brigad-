@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: brigada
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    disk:
+      name: dados
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: WEBHOOK_SECRET
+        generateValue: true

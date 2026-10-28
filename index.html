@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brigadá — sistema para docerias</title>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E4F0CF;--bg2:#FFF1F4;--ink:#2B0A22;--pink:#FF4F83;--cara:#F2A93B;--choc:#4A1F14;--card:#FFFFFF;--mut:#6b4a5f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2B0A22;--bg2:#3a1230;--ink:#FFF1F4;--card:#44193a;--mut:#d9b5c9}}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.55 Figtree,system-ui,sans-serif;overflow-x:hidden}
+h1,h2,h3,.fat{font-family:'Bagel Fat One','Arial Black',system-ui,sans-serif;font-weight:400;line-height:1}
+section{padding:90px 6vw;position:relative}
+.wrap{max-width:1080px;margin:auto}
+h2{font-size:clamp(34px,6vw,64px);margin-bottom:14px}
+.lead{max-width:56ch;color:var(--mut);margin-bottom:36px}
+nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:calc(12px + env(safe-area-inset-top,0px)) 5vw 12px;backdrop-filter:blur(10px);background:color-mix(in srgb,var(--bg) 70%,transparent)}
+nav b{font:400 26px 'Bagel Fat One',sans-serif;color:var(--pink)}
+nav a{color:var(--ink);text-decoration:none;font-weight:600;margin-left:18px;font-size:15px}
+@media(max-width:640px){nav a:not(.cta){display:none}}
+.btn,.cta{display:inline-block;background:var(--pink);color:#fff;border:0;border-radius:99px;padding:14px 26px;font:800 16px Figtree,sans-serif;cursor:pointer;text-decoration:none;transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.btn:hover,.cta:hover{transform:scale(1.06) rotate(-2deg)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--cara);outline-offset:2px}
+.btn.alt{background:var(--ink);color:var(--bg)}
+/* hero */
+#hero{min-height:100svh;display:grid;align-content:center;padding-top:110px;overflow:hidden}
+#hero h1{font-size:clamp(54px,13vw,170px);letter-spacing:-.02em}
+#hero h1 span{display:inline-block;animation:pop .9s cubic-bezier(.3,1.7,.5,1) both;animation-delay:calc(var(--i)*70ms)}
+#hero h1 .l2{color:var(--pink)}
+@keyframes pop{from{transform:translateY(120%) rotate(18deg) scale(.4);opacity:0}}
+#hero p{max-width:44ch;margin:26px 0;font-size:20px}
+.sp{position:absolute;top:-30px;width:6px;height:22px;border-radius:4px;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.bri{position:absolute;right:6vw;top:50%;width:min(34vw,340px);aspect-ratio:1;translate:0 -50%;animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-22px) rotate(8deg)}}
+.bri svg{width:100%;height:100%}
+.spin{position:absolute;right:calc(6vw + min(34vw,340px) - 40px);bottom:12vh;width:120px;height:120px;animation:rot 14s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+@media(max-width:760px){.bri{opacity:.25;width:70vw;right:-10vw}.spin{display:none}}
+.marq{background:var(--ink);color:var(--bg);overflow:hidden;white-space:nowrap;padding:14px 0;transform:rotate(-1.5deg);margin:-10px -2vw}
+.marq div{display:inline-block;font:400 28px 'Bagel Fat One',sans-serif;animation:mq 22s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px}
+.card{background:var(--card);border-radius:34px 34px 34px 10px;padding:28px;box-shadow:0 10px 0 var(--ink)}
+.card.b{border-radius:10px 34px 34px 34px;box-shadow:0 10px 0 var(--pink)}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:2px dashed color-mix(in srgb,var(--ink) 20%,transparent)}
+.dot{width:38px;height:38px;border-radius:50%;flex:none;box-shadow:inset -5px -5px 0 rgba(0,0,0,.18)}
+.item .n{flex:1;font-weight:600}.item small{display:block;color:var(--mut);font-weight:400;font-size:13px}
+.pr{font-weight:800;transition:background .3s}
+.flash{animation:fl 1.2s}@keyframes fl{0%{background:var(--cara);transform:scale(1.25)}100%{background:transparent}}
+.off{opacity:.4;text-decoration:line-through}
+.step{display:flex;align-items:center;gap:8px}
+.step button{width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:transparent;color:var(--ink);font:800 18px Figtree;cursor:pointer;transition:transform .15s}
+.step button:active{transform:scale(.8)}
+.step output{min-width:22px;text-align:center;font-weight:800}
+label{display:block;font-weight:600;margin:14px 0 6px;font-size:15px}
+input,select{width:100%;padding:12px 14px;border:2px solid var(--ink);border-radius:14px;background:var(--bg2);color:var(--ink);font:inherit}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{flex:1;padding:10px;border:2px solid var(--ink);border-radius:99px;background:transparent;color:var(--ink);font:600 15px Figtree;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.tot{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0}
+.tot b{font:400 44px 'Bagel Fat One',sans-serif;color:var(--pink)}
+.meter{height:16px;border-radius:99px;background:color-mix(in srgb,var(--ink) 15%,transparent);overflow:hidden;margin:10px 0}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cara),var(--pink));border-radius:99px;transition:width .6s cubic-bezier(.3,1.4,.5,1)}
+.badge{display:inline-block;padding:6px 14px;border-radius:99px;font-weight:800;font-size:14px}
+.hot{background:#2fbf71;color:#fff}.cold{background:var(--cara);color:var(--choc)}
+.tag{font-size:13px;font-weight:800;background:var(--cara);color:var(--choc);padding:4px 12px;border-radius:99px;display:inline-block;margin-bottom:10px}
+.browser{background:var(--card);border-radius:18px;box-shadow:0 10px 0 var(--ink);overflow:hidden}
+.bar{display:flex;gap:8px;align-items:center;padding:12px 16px;background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.bar i{width:11px;height:11px;border-radius:50%;background:var(--pink)}.bar span{flex:1;background:var(--bg2);border-radius:99px;padding:3px 14px;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;margin-top:40px}
+.stats b{display:block;font:400 clamp(40px,6vw,64px) 'Bagel Fat One',sans-serif;color:var(--pink)}
+.rv{opacity:0;transform:translateY(40px) rotate(1deg);transition:.8s cubic-bezier(.2,1.2,.4,1)}.rv.in{opacity:1;transform:none}
+#ok{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:color-mix(in srgb,var(--ink) 80%,transparent);text-align:center;padding:20px}
+#ok.on{display:grid}
+#ok div.box{background:var(--card);padding:40px;border-radius:40px;max-width:420px;animation:pop .7s cubic-bezier(.3,1.7,.5,1)}
+.cf{position:fixed;top:-20px;width:10px;height:14px;z-index:60;animation:fall 2.4s ease-in forwards}
+footer{padding:50px 6vw;text-align:center;color:var(--mut)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<nav><b>Brigadá</b><div><a href="#pedido">Pedido</a><a href="#cardapio">Cardápio</a><a href="#eventos">Eventos</a><a class="cta" href="#pedido">Quero o meu</a></div></nav>
+
+<section id="hero">
+<div class="bri" aria-hidden="true"><svg viewBox="0 0 200 200"><defs><radialGradient id="g" cx=".35" cy=".3"><stop offset="0" stop-color="#8a4a30"/><stop offset="1" stop-color="#3a160d"/></radialGradient></defs>
+<path d="M30 120 L18 168 L60 150 L100 176 L140 150 L182 168 L170 120Z" fill="#FF4F83"/>
+<circle cx="100" cy="95" r="70" fill="url(#g)"/>
+<g id="sg"></g></svg></div>
+<svg class="spin" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="c" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><circle cx="60" cy="60" r="58" fill="#F2A93B"/><text font-family="Figtree" font-weight="800" font-size="13" fill="#4A1F14"><textPath href="#c">pedido feito sem WhatsApp • sem WhatsApp •</textPath></text></svg>
+<div class="wrap">
+<h1 id="h"></h1>
+<p>O site da sua doceria com cardápio vivo, pedido com pagamento e orçamento de eventos. Menos conversa no WhatsApp, mais brigadeiro saindo da cozinha.</p>
+<a class="btn" href="#pedido">Ver o sistema funcionando</a> <a class="btn alt" href="#eventos">Orçar um evento</a>
+</div>
+</section>
+<div class="marq" aria-hidden="true"><div id="mq"></div></div>
+
+<section id="pedido"><div class="wrap">
+<div class="tag">Automação de pedidos</div>
+<h2>Fechou a caixa em 1 minuto.</h2>
+<p class="lead">Em vez de 20 minutos de mensagens para fechar uma caixa de brigadeiros, o cliente escolhe, paga e agenda a entrega direto no site. Teste abaixo.</p>
+<div class="grid">
+<div class="card"><h3 style="font-size:28px;margin-bottom:8px">1. Monte a caixa</h3><div id="pick"></div></div>
+<div class="card b"><h3 style="font-size:28px">2. Pague e agende</h3>
+<label>Data da entrega</label><input type="date" id="dt">
+<label>Pagamento</label><div class="seg" id="pay"><button aria-pressed="true" data-v="Pix">Pix</button><button aria-pressed="false" data-v="Cartão">Cartão</button></div>
+<label>Seu nome</label><input id="nm" placeholder="Ex.: Ana" autocomplete="name"><label>WhatsApp (para avisos da entrega)</label><input id="ph" inputmode="tel" placeholder="(84) 9 0000-0000" autocomplete="tel">
+<div class="tot"><span id="cnt">0 docinhos</span><b id="tot">R$ 0</b></div>
+<button class="btn" id="go" style="width:100%">Pagar e agendar</button>
+<p id="err" style="color:var(--pink);font-weight:600;margin-top:10px"></p></div>
+</div></div></section>
+
+<section id="cardapio" style="background:var(--bg2)"><div class="wrap">
+<div class="tag">Cardápio sempre atualizado</div>
+<h2>Mudou o preço? Em segundos.</h2>
+<p class="lead">Chega de PDF pesado reenviado toda semana. Preços e sabores mudam aqui assim que a doceria atualiza o painel, sem ninguém reenviar nada.</p>
+<div class="card" style="max-width:640px"><div id="menu" aria-live="polite"></div></div>
+</div></section>
+
+<section id="eventos"><div class="wrap">
+<div class="tag">Encomendas de eventos</div>
+<h2>Orçamento só com quem vai comprar.</h2>
+<p class="lead">Um formulário exclusivo para casamentos e aniversários. As perguntas certas separam curiosos de clientes reais antes de você gastar tempo.</p>
+<div class="grid">
+<div class="card"><div class="seg" id="ev"><button aria-pressed="true" data-v="Casamento">Casamento</button><button aria-pressed="false" data-v="Aniversário">Aniversário</button><button aria-pressed="false" data-v="Corporativo">Corporativo</button></div>
+<label>Convidados: <b id="gv">80</b></label><input type="range" id="gu" min="10" max="400" step="10" value="80">
+<label>Data do evento</label><input type="date" id="ed">
+<label>Investimento previsto</label><select id="bd"><option value="0">Ainda não sei</option><option value="500">até R$ 500</option><option value="1500">R$ 500 a 1.500</option><option value="3000">R$ 1.500 a 3.000</option><option value="6000">acima de R$ 3.000</option></select>
+<label>Seu nome</label><input id="en" autocomplete="name"><label>WhatsApp</label><input id="wa" inputmode="tel" placeholder="(84) 9 0000-0000"></div>
+<div class="card b"><h3 style="font-size:28px">Triagem automática</h3>
+<div class="meter"><i id="mt"></i></div>
+<p id="sc" style="margin:12px 0"></p><span class="badge cold" id="bg">Preencha para avaliar</span>
+<p id="sg2" style="margin:16px 0;color:var(--mut)"></p>
+<button class="btn" id="sendq" style="width:100%">Enviar pedido de orçamento</button><p id="qerr" style="color:var(--pink);font-weight:600;margin-top:10px"></p></div>
+</div></div></section>
+
+<section id="conf" style="background:var(--ink);color:var(--bg)"><div class="wrap">
+<div class="tag">Profissionalismo e credibilidade</div>
+<h2>Quem paga mais confia mais.</h2>
+<p class="lead" style="color:inherit;opacity:.8">Um site próprio passa muito mais confiança em encomendas de valor alto do que só uma página de Instagram.</p>
+<div class="browser" style="color:var(--ink)"><div class="bar"><i></i><i></i><i></i><span>🔒 suadoceria.com.br</span></div>
+<div style="padding:30px;display:grid;gap:10px"><b class="fat" style="font-size:30px">Sua marca, seu domínio, sua vitrine.</b><span>Pagamento seguro, política de entrega, avaliações e portfólio de eventos num só lugar.</span></div></div>
+<div class="stats"><div><b data-n="20">0</b>minutos economizados por pedido</div><div><b data-n="24">0</b>horas de cardápio aberto por dia</div><div><b data-n="3">0</b>vezes mais confiança em orçamentos altos*</div></div>
+<p style="opacity:.6;font-size:13px;margin-top:18px">*Valor ilustrativo desta demonstração.</p>
+</div></section>
+<footer>Brigadá • feito com carinho • <a href="/admin" style="color:inherit">Área da confeiteira</a></footer>
+
+<div id="ok" role="dialog" aria-live="polite"><div class="box"><div class="fat" id="okh" style="font-size:44px;color:var(--pink)">Pedido confirmado!</div><p id="okt" style="margin:14px 0 22px"></p><div id="pixb" style="display:none;margin-bottom:18px"><small style="display:block;margin-bottom:6px">Código Pix (copia e cola)</small><code id="pixc" style="display:block;word-break:break-all;background:var(--bg2);padding:10px;border-radius:12px;margin-bottom:8px"></code><button class="btn alt" id="pixcp" style="padding:8px 16px;font-size:14px">Copiar código</button></div><button class="btn" id="cl">Fechar</button></div></div>
+
+<script>
+const $=s=>document.querySelector(s),COL=['#FF4F83','#F2A93B','#2fbf71','#6aa8ff','#fff'];
+let M=[];
+const R=n=>'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
+// hero
+const h=$('#h');let i=0;[['Doce','l1'],['sem','l1'],['fila.','l2']].forEach(([w,c],k)=>{if(k)h.append(document.createElement('br'));[...w].forEach(ch=>{const s=document.createElement('span');s.textContent=ch;s.className=c;s.style.setProperty('--i',i++);h.append(s)})});
+const sg=$('#sg');for(let k=0;k<26;k++){const a=Math.random()*6.28,r=Math.random()*58,e=document.createElementNS('http://www.w3.org/2000/svg','rect');e.setAttribute('x',100+Math.cos(a)*r);e.setAttribute('y',95+Math.sin(a)*r);e.setAttribute('width',3);e.setAttribute('height',11);e.setAttribute('rx',1.5);e.setAttribute('fill',COL[k%4]);e.setAttribute('transform',`rotate(${Math.random()*180} ${100+Math.cos(a)*r} ${95+Math.sin(a)*r})`);sg.append(e)}
+for(let k=0;k<34;k++){const s=document.createElement('i');s.className='sp';s.style.cssText=`left:${Math.random()*100}%;background:${COL[k%4]};animation-duration:${5+Math.random()*7}s;animation-delay:-${Math.random()*10}s;opacity:.7`;$('#hero').append(s)}
+$('#mq').innerHTML=('Brigadeiro • Beijinho • Casadinho • Bolo no pote • Cento de doces • '.repeat(4));
+// cardápio e montagem da caixa (dados vêm do servidor)
+let pay='Pix',flash=0;
+function render(){
+ $('#menu').innerHTML=M.length?M.map(m=>`<div class="item ${m.on?'':'off'}"><span class="dot" style="background:${m.c}"></span><span class="n">${esc(m.n)}<small>${m.on?esc(m.d):'Esgotado hoje'}</small></span><span class="pr ${flash==m.id?'flash':''}">${R(m.p)}</span></div>`).join(''):'<p>Carregando o cardápio…</p>';
+ $('#pick').innerHTML=M.filter(m=>m.on).map(m=>`<div class="item"><span class="dot" style="background:${m.c}"></span><span class="n">${esc(m.n)}<small>${R(m.p)} cada</small></span><span class="step"><button data-m="${m.id}" aria-label="menos">−</button><output>${m.q}</output><button data-a="${m.id}" aria-label="mais">+</button></span></div>`).join('');
+ const L=M.filter(m=>m.on),c=L.reduce((s,m)=>s+m.q,0),t=L.reduce((s,m)=>s+m.q*m.p,0);
+ $('#cnt').textContent=c+' docinhos';$('#tot').textContent=R(t);flash=0}
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function loadMenu(first){
+ try{const j=await (await fetch('/api/menu')).json();
+  const q=Object.fromEntries(M.map(m=>[m.id,m.q])),old=Object.fromEntries(M.map(m=>[m.id,m.p]));
+  M=j.items.map(i=>({id:i.id,n:i.name,d:i.description||'',p:i.price_cents/100,c:i.color||'#4A1F14',on:i.active?1:0,q:i.active?(q[i.id]||0):0}));
+  const ch=M.find(m=>old[m.id]!==undefined&&old[m.id]!==m.p);flash=ch?ch.id:0;render()}
+ catch(e){if(first)$('#menu').innerHTML='<p>Não foi possível carregar o cardápio agora. Tente recarregar a página.</p>'}}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const f=id=>M.find(m=>m.id==id);
+ if(b.dataset.a){f(b.dataset.a).q++;render()}if(b.dataset.m){const m=f(b.dataset.m);m.q=Math.max(0,m.q-1);render()}});
+document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;g.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x==b));if(g.id=='pay')pay=b.dataset.v;eva()}));
+const tm=new Date(Date.now()+864e5).toISOString().slice(0,10);$('#dt').min=tm;$('#dt').value=tm;
+function confetti(){for(let k=0;k<70;k++){const d=document.createElement('i');d.className='cf';d.style.cssText=`left:${Math.random()*100}%;background:${COL[k%5]};animation-duration:${1.6+Math.random()*1.6}s;animation-delay:${Math.random()*.4}s;border-radius:${k%2?'50%':'2px'}`;document.body.append(d);setTimeout(()=>d.remove(),3800)}}
+function done(title,msg,pix){$('#okh').textContent=title;$('#okt').textContent=msg;$('#pixb').style.display=pix?'block':'none';$('#pixc').textContent=pix||'';$('#ok').classList.add('on');confetti();$('#cl').focus()}
+$('#pixcp').onclick=async()=>{try{await navigator.clipboard.writeText($('#pixc').textContent);$('#pixcp').textContent='Copiado!'}catch(e){$('#pixcp').textContent='Selecione e copie o código'}};
+$('#cl').onclick=()=>$('#ok').classList.remove('on');
+$('#go').onclick=async()=>{const c=M.reduce((s,m)=>s+m.q,0),n=$('#nm').value.trim(),err=$('#err');err.textContent='';
+ if(c<4)return err.textContent='O pedido mínimo é de 4 docinhos.';if(!n)return err.textContent='Informe seu nome.';
+ const b=$('#go');b.disabled=true;b.textContent='Enviando…';
+ try{const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({customer:n,phone:$('#ph').value,delivery_date:$('#dt').value,payment_method:pay,items:M.filter(m=>m.q).map(m=>({menu_id:m.id,qty:m.q}))})});
+  const j=await r.json();if(!r.ok){if(r.status==409)loadMenu();throw new Error(j.error||'Erro ao enviar o pedido.')}
+  const d=new Date(j.delivery_date+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  done('Pedido recebido!',`Obrigada, ${n}! Pedido #${j.code} de ${R(j.total_cents/100)}. Entrega agendada para ${d}.`+(pay=='Cartão'?' Enviaremos o link de pagamento pelo WhatsApp.':' Pague com o Pix abaixo para confirmar.'),j.pix_code);
+  M.forEach(m=>m.q=0);render()}
+ catch(e){err.textContent=e.message}finally{b.disabled=false;b.textContent='Pagar e agendar'}};
+// eventos
+const ed=$('#ed');const e0=new Date(Date.now()+30*864e5).toISOString().slice(0,10);ed.min=tm;ed.value=e0;
+function eva(){const g=+$('#gu').value,b=+$('#bd').value,days=(new Date(ed.value)-Date.now())/864e5,ph=$('#wa').value.replace(/\D/g,'').length>=10;
+ $('#gv').textContent=g;const ideal=g*18;let s=0;s+=b?Math.min(45,b/ideal*45):0;s+=days>=14?25:days>=5?12:0;s+=ph?20:0;s+=g>=30?10:4;s=Math.round(Math.min(100,s));
+ $('#mt').style.width=s+'%';$('#sc').textContent='Pontuação de intenção: '+s+'/100';const hot=s>=65;
+ const bg=$('#bg');bg.className='badge '+(hot?'hot':'cold');bg.textContent=hot?'Cliente qualificado':'Ainda em dúvida';
+ $('#sg2').textContent=hot?'Vai direto para a sua fila com prioridade e já com data, convidados e verba.':!b?'Informe uma faixa de investimento para receber o orçamento.':!ph?'Falta o WhatsApp para contato.':days<14?'Pouco prazo: avisamos sobre a agenda antes do orçamento.':'Verba abaixo do usual para este número de convidados. Enviamos opções do cardápio padrão.'}
+['gu','ed','bd','wa'].forEach(id=>$('#'+id).addEventListener('input',eva));eva();
+$('#sendq').onclick=async()=>{eva();const b=$('#sendq'),err=$('#qerr');err.textContent='';b.disabled=true;
+ try{const r=await fetch('/api/quotes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event_type:document.querySelector('#ev [aria-pressed=true]').dataset.v,guests:+$('#gu').value,event_date:ed.value,budget_cents:+$('#bd').value*100,phone:$('#wa').value,name:$('#en').value})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||'Erro ao enviar.');done('Recebido!',j.message)}
+ catch(e){err.textContent=e.message}finally{b.disabled=false}};
+loadMenu(1);setInterval(()=>{if(!document.hidden)loadMenu()},20000);
+// reveal + counters
+const io=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target);if(x.target.dataset.n){const t=+x.target.dataset.n,e=x.target;let v=0;const iv=setInterval(()=>{v++;e.textContent=v+(t==3?'x':'');if(v>=t)clearInterval(iv)},1100/t)}}}),{threshold:.25});
+document.querySelectorAll('.card,.browser,[data-n]').forEach(e=>{if(!e.dataset.n)e.classList.add('rv');io.observe(e)});
+</script>
+</body>
+</html>
